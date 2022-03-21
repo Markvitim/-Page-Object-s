@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ru.netology.test.MoneyTransferTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2022-03-21T13:11:23" hostname="DESKTOP-SSEUBT9" time="15.549">
+  <properties/>
+  <testcase name="shouldCancelTransfer()" classname="ru.netology.test.MoneyTransferTest" time="7.73"/>
+  <testcase name="shouldGetBalance()" classname="ru.netology.test.MoneyTransferTest" time="2.76"/>
+  <testcase name="shouldTransferFromSecondToFirstCard()" classname="ru.netology.test.MoneyTransferTest" time="2.363"/>
+  <testcase name="shouldTransferFromFirstToSecondCard()" classname="ru.netology.test.MoneyTransferTest" time="2.687"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+Starting ChromeDriver 99.0.4844.51 (d537ec02474b5afe23684e7963d538896c63ac77-refs/branch-heads/4844@{#875}) on port 37282
+Only local connections are allowed.
+Please see https://chromedriver.chromium.org/security-considerations for suggestions on keeping ChromeDriver safe.
+ChromeDriver was started successfully.
+мар. 21, 2022 4:11:27 PM org.openqa.selenium.remote.ProtocolHandshake createSession
+INFO: Detected dialect: W3C
+]]></system-err>
+</testsuite>
