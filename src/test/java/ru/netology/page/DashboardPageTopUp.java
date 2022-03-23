@@ -1,33 +1,43 @@
 package ru.netology.page;
 
-import com.codeborne.selenide.ElementsCollection;
+import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.SelenideElement;
 import ru.netology.data.DataInfo;
 
-import static com.codeborne.selenide.Selenide.$$;
+import static com.codeborne.selenide.Selenide.$;
 
 public class DashboardPageTopUp {
-    private ElementsCollection inputField = $$(".input__control");
-    private ElementsCollection button = $$(".button__text");
+    private SelenideElement sumInputField = $("[data-test-id=\"amount\"] input");
+    private SelenideElement fromField = $("[data-test-id=\"from\"] input");
+    private SelenideElement button = $(".button__text");
+    private SelenideElement buttonCancel = $("[data-test-id=\"action-cancel\"].button");
 
-    public void DashboardPageTop() {
-    }
 
     public DashboardPageYourCards transferMoneyToFirstCard(int amount) {
-        inputField.get(0).setValue(String.valueOf(amount));
-        inputField.get(1).setValue(String.valueOf(DataInfo.getCardSecond()));
-        button.first().click();
+        sumInputField.shouldBe(Condition.visible).setValue(String.valueOf(amount));
+        fromField.shouldBe(Condition.visible).setValue(DataInfo.getCardSecond().getNumber());
+        button.shouldHave(Condition.text("Пополнить")).click();
         return new DashboardPageYourCards();
     }
+
     public DashboardPageYourCards transferMoneyToSecondCard(int amount) {
-        inputField.get(0).setValue(String.valueOf(amount));
-        inputField.get(1).setValue(String.valueOf(DataInfo.getCardFirst()));
-        button.first().click();
+        sumInputField.shouldBe(Condition.visible).setValue(String.valueOf(amount));
+        fromField.shouldBe(Condition.visible).setValue(DataInfo.getCardFirst().getNumber());
+        button.shouldHave(Condition.text("Пополнить")).click();
         return new DashboardPageYourCards();
     }
+
     public DashboardPageYourCards transferCancel(int amount) {
-        inputField.get(0).setValue(String.valueOf(amount));
-        inputField.get(1).setValue(String.valueOf(DataInfo.getCardFirst()));
-        button.last().click();
+        sumInputField.shouldBe(Condition.visible).setValue(String.valueOf(amount));
+        fromField.shouldBe(Condition.visible).setValue(String.valueOf(DataInfo.getCardFirst()));
+        buttonCancel.click();
+        return new DashboardPageYourCards();
+    }
+
+    public DashboardPageYourCards transferRefuse(int amount) {
+        sumInputField.shouldBe(Condition.visible).setValue(String.valueOf(amount));
+        fromField.shouldBe(Condition.visible).setValue("23255522233");
+        button.shouldHave(Condition.text("Пополнить")).click();
         return new DashboardPageYourCards();
     }
 }
