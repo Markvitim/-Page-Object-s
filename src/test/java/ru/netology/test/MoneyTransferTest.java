@@ -1,6 +1,5 @@
 package ru.netology.test;
 
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import ru.netology.data.DataInfo;
 import ru.netology.page.LoginPage;
 
-import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 
 
@@ -21,37 +19,41 @@ public class MoneyTransferTest {
     }
 
     @Test
-    void shouldTopUpFirstCard() {
+    void shouldTopUpCardFirst() {
         var loginPage = new LoginPage();
         var authInfo = DataInfo.getAuthInfo();
         var verificationPage = loginPage.validAuthInfo(authInfo);
         var verificationCode = DataInfo.getCodeFor(authInfo);
         var validVerify = verificationPage.validVerify(verificationCode);
-        var topUp = validVerify.shouldTopUpCard(0);
-        var transfer = topUp.transferMoneyToFirstCard(100);
-        var actual1 = transfer.getCardFirstBalance();
-        var actual2 = transfer.getCardSecondBalance();
-        var actual3 = actual1 + actual2;
-        Assertions.assertEquals(10100, actual1);
-        Assertions.assertEquals(9900, actual2);
-        Assertions.assertEquals(20000, actual3);
+        var amount = 100;
+        var expectedBalanceFirstCard = validVerify.getCardFirstBalance() + amount;
+        var expectedBalanceSecondCard = validVerify.getCardSecondBalance() - amount;
+        var topUpPage = validVerify.shouldTopUpCard(0);
+        var transfer = topUpPage.transferMoney(amount, DataInfo.getCardSecond().getNumber());
+        var actualBalanceFirstCard = transfer.getCardFirstBalance();
+        var actualBalanceSecondCard = transfer.getCardSecondBalance();
+        Assertions.assertEquals(expectedBalanceFirstCard, actualBalanceFirstCard);
+        Assertions.assertEquals(expectedBalanceSecondCard, actualBalanceSecondCard);
+        Assertions.assertEquals(20000, actualBalanceFirstCard + actualBalanceSecondCard);
     }
 
     @Test
-    void shouldTopUpSecondCard() {
+    void shouldTopUpCardSecond() {
         var loginPage = new LoginPage();
         var authInfo = DataInfo.getAuthInfo();
         var verificationPage = loginPage.validAuthInfo(authInfo);
         var verificationCode = DataInfo.getCodeFor(authInfo);
         var validVerify = verificationPage.validVerify(verificationCode);
-        var topUp = validVerify.shouldTopUpCard(1);
-        var transfer = topUp.transferMoneyToSecondCard(300);
-        var actual1 = transfer.getCardFirstBalance();
-        var actual2 = transfer.getCardSecondBalance();
-        var actual3 = actual1 + actual2;
-        Assertions.assertEquals(10100, actual1);
-        Assertions.assertEquals(9900, actual2);
-        Assertions.assertEquals(20000, actual3);
+        var amount = 100;
+        var expectedBalanceFirstCard = validVerify.getCardFirstBalance() - amount;
+        var expectedBalanceSecondCard = validVerify.getCardSecondBalance() + amount;
+        var topUpPage = validVerify.shouldTopUpCard(1);
+        var transfer = topUpPage.transferMoney(amount, DataInfo.getCardFirst().getNumber());
+        var actualBalanceFirstCard = transfer.getCardFirstBalance();
+        var actualBalanceSecondCard = transfer.getCardSecondBalance();
+        Assertions.assertEquals(expectedBalanceFirstCard, actualBalanceFirstCard);
+        Assertions.assertEquals(expectedBalanceSecondCard, actualBalanceSecondCard);
+        Assertions.assertEquals(20000, actualBalanceFirstCard + actualBalanceSecondCard);
     }
 
     @Test
@@ -61,41 +63,18 @@ public class MoneyTransferTest {
         var verificationPage = loginPage.validAuthInfo(authInfo);
         var verificationCode = DataInfo.getCodeFor(authInfo);
         var validVerify = verificationPage.validVerify(verificationCode);
+        var amount = 100;
+        var expectedBalanceFirstCard = validVerify.getCardFirstBalance();
+        var expectedBalanceSecondCard = validVerify.getCardSecondBalance();
         var topUp = validVerify.shouldTopUpCard(1);
-        var cancel = topUp.transferCancel(100);
-        var actual1 = cancel.getCardFirstBalance();
-        var actual2 = cancel.getCardSecondBalance();
-        var actual3 = actual1 + actual2;
-        Assertions.assertEquals(10000, actual1);
-        Assertions.assertEquals(10000, actual2);
-        Assertions.assertEquals(20000, actual3);
+        var cancel = topUp.transferCancel(100, DataInfo.getCardFirst().getNumber());
+        var actualBalanceFirstCard = cancel.getCardFirstBalance();
+        var actualBalanceSecondCard = cancel.getCardSecondBalance();
+        Assertions.assertEquals(expectedBalanceFirstCard, actualBalanceFirstCard);
+        Assertions.assertEquals(expectedBalanceSecondCard, actualBalanceSecondCard);
+        Assertions.assertEquals(20000, actualBalanceFirstCard + actualBalanceSecondCard);
     }
 
-    @Test
-    void shouldGetBalanceCardFirst() {
-        var loginPage = new LoginPage();
-        var authInfo = DataInfo.getAuthInfo();
-        var verificationPage = loginPage.validAuthInfo(authInfo);
-        var verificationCode = DataInfo.getCodeFor(authInfo);
-        var validVerify = verificationPage.validVerify(verificationCode);
-        var topUpClick = validVerify.shouldTopUpCard(0);
-        var inputAmount = topUpClick.transferMoneyToFirstCard(300);
-        int actual = inputAmount.getCardFirstBalance();
-        Assertions.assertEquals(10400, actual);
-    }
-
-    @Test
-    void shouldGetBalanceCardSecond() {
-        var loginPage = new LoginPage();
-        var authInfo = DataInfo.getAuthInfo();
-        var verificationPage = loginPage.validAuthInfo(authInfo);
-        var verificationCode = DataInfo.getCodeFor(authInfo);
-        var validVerify = verificationPage.validVerify(verificationCode);
-        var topUpClick = validVerify.shouldTopUpCard(1);
-        var inputAmount = topUpClick.transferMoneyToSecondCard(50);
-        var actual = inputAmount.getCardSecondBalance();
-        Assertions.assertEquals(9950, actual);
-    }
 
     @Test
     void shouldCheckRefuse() {
@@ -104,8 +83,10 @@ public class MoneyTransferTest {
         var verificationPage = loginPage.validAuthInfo(authInfo);
         var verificationCode = DataInfo.getCodeFor(authInfo);
         var validVerify = verificationPage.validVerify(verificationCode);
+        var amount = 100;
+        var cardNumber = "1000000000000000";
         var topUpClick = validVerify.shouldTopUpCard(1);
-        topUpClick.transferRefuse(50);
-        $(".notification__title").shouldHave(Condition.text("Ошибка"));
+        topUpClick.transferRefuse(amount, cardNumber);
     }
+
 }
